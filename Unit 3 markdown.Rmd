@@ -1,0 +1,49 @@
+---
+title: "Unit3 DS6371"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+
+df <- read.csv("./Downloads/EducationalIncomes.csv", header = TRUE, colClasses = c("Subject" = "factor", "Educ" = "factor"))
+```
+```{r}
+df %>% ggplot(aes(x = Income2005, fill = Educ))+geom_histogram()+theme_economist()+scale_fill_canva()
+df %>% ggplot(aes(x = Educ, y = Income2005, fill = Educ)) + geom_boxplot()+theme_economist()+scale_fill_canva()
+df12 <- df %>% filter(Educ == 12)
+df16 <- df %>% filter(Educ==16)
+summary(df12$Income2005)
+summary(df16$Income2005)
+
+df %>% ggplot(aes(sample=Income2005)) + geom_qq()+theme_economist()+scale_color_canva()
+
+
+```
+
+```{r}
+#add column for logs using mutate
+
+df <- df %>% mutate(loginc = log(Income2005))
+log12 <- df %>% filter(Educ==12) %>% select(loginc)
+log16 <- df %>% filter(Educ==16) %>%  select(loginc)
+
+df %>% ggplot(aes(x = loginc, fill = Educ))+
+  geom_histogram()+theme_economist()+scale_fill_canva()
+qt(.05,1424)
+t.test(log16, log12, var.equal = TRUE)
+
+t.test(log16, log12, var.equal = TRUE, conf.level = .90)
+
+log12
+mean(log1$loginc)-mean(log12$loginc)
+
+df %>% ggplot(aes(sample = loginc))+geom_qq()+theme_economist()+ggtitle("Log Transformed qq plot")
+```
+
